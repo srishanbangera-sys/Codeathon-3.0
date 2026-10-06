@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  subjects             Subject[]
+  exams                Exam[]
+  assignments          Assignment[]
+  availability         Availability[]
+  availabilityOverrides AvailabilityOverride[]
+  studySessions        StudySession[]
+  resources            Resource[]
+}
+
+model Subject {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  color     String   @default("#0F4C5C")
+  priority  Int      @default(3)
+  createdAt DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topics      Topic[]
+  exams       Exam[]
+  assignments Assignment[]
+  resources   Resource[]
+
+  @@index([userId])
+}
+
+model Topic {
+  id             String    @id @default(cuid())
+  subjectId      String
+  title          String
+  difficulty     Int       @default(3)
+  estimatedHours Float     @default(1.0)
+  status         String    @default("NOT_STARTED")
+  notes          String?
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  studySessions StudySession[]
+  resources     Resource[]
+
+  @@index([subjectId])
+}
+
+model Exam {
+  id        String   @id @default(cuid())
+  userId    String
+  subjectId String
+  title     String
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+}
+
+model Assignment {
+  id             String    @id @default(cuid())
+  userId         String
+  subjectId      String
+  title          String
+  deadline       DateTime
+  estimatedHours Float     @default(1.0)
+  status         String    @default("NOT_STARTED")
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  studySessions StudySession[]
+
+  @@index([userId])
+  @@index([deadline])
+}
+
+model Availability {
+  id      String @id @default(cuid())
+  userId  String
+  weekday Int
+  hours   Float
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekday])
+  @@index([userId])
+}
+
+model AvailabilityOverride {
+  id     String   @id @default(cuid())
+  userId String
+  date   DateTime
+  hours  Float
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model StudySession {
+  id           String    @id @default(cuid())
+  userId       String
+  topicId      String?
+  assignmentId String?
+  date         DateTime
+  startTime    String
+  endTime      String
+  status       String    @default("PLANNED")
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic      Topic?      @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  assignment Assignment? @relation(fields: [assignmentId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([date])
+  @@index([userId, date])
+}
+
+model Resource {
+  id        String   @id @default(cuid())
+  userId    String
+  subjectId String?
+  topicId   String?
+  title     String
+  url       String
+  type      String   @default("OTHER")
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  topic   Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([subjectId])
+  @@index([topicId])
+}
