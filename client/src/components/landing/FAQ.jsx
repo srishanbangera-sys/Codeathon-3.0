@@ -16,7 +16,7 @@ export default function FAQ() {
     {
       icon: Clock,
       question: "How are milestones tracked?",
-      answer: "StudyPilot tracks your study hours automatically and updates your progress towards goals in real-time."
+      answer: "LearnBuddy tracks your study hours automatically and updates your progress towards goals in real-time."
     },
     {
       icon: ShieldCheck,
@@ -56,7 +56,7 @@ export default function FAQ() {
           </h2>
           
           <p className="text-[16px] text-gray-400 mb-8 leading-relaxed font-medium">
-            Find quick answers to the most common questions about StudyPilot and how it works.
+            Find quick answers to the most common questions about LearnBuddy and how it works.
           </p>
 
         </RevealWrapper>

@@ -46,9 +46,9 @@ export default function ExamsAssignments() {
         assignmentsAPI.list(),
         subjectsAPI.list()
       ]);
-      setExams(exRes.data.data);
-      setAssignments(asRes.data.data);
-      setSubjects(subRes.data.data);
+      setExams(exRes.data?.data || []);
+      setAssignments(asRes.data?.data || []);
+      setSubjects(subRes.data?.data || []);
     } catch (err) {
       toast.error('Failed to load data');
     } finally {
@@ -128,72 +128,75 @@ export default function ExamsAssignments() {
   if (loading) return <div className="skeleton h-64 rounded-2xl max-w-7xl mx-auto"></div>;
 
   return (
-    <div className="space-y-6 page-enter">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 page-enter max-w-[1400px]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-primary-dark)]">Exams & Tasks</h1>
-          <p className="text-[var(--color-text-secondary)] mt-1">Manage your important dates</p>
+          <h1 className="text-3xl font-bold text-[#051c24] tracking-tight">Exams & Tasks</h1>
+          <p className="text-gray-500 font-medium mt-1">Manage your important dates</p>
         </div>
-        <div className="flex gap-2">
-           <button onClick={() => openModal('exam')} className="btn btn-outline">
-             <Plus size={18} /> Exam
+        <div className="flex gap-3">
+           <button onClick={() => openModal('exam')} className="px-5 py-2.5 rounded-full border-2 border-gray-200 text-gray-600 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-2">
+             <Plus size={18} strokeWidth={2.5} /> Exam
            </button>
-           <button onClick={() => openModal('assignment')} className="btn btn-primary">
-             <Plus size={18} /> Assignment
+           <button onClick={() => openModal('assignment')} className="bg-[#2dc1c1] hover:bg-[#1b8c8c] text-white font-bold px-5 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-sm">
+             <Plus size={18} strokeWidth={2.5} /> Task
            </button>
         </div>
       </div>
 
-      <div className="flex border-b border-[var(--color-border)]">
+      <div className="flex border-b border-gray-200 gap-6 mt-8">
         <button 
-          className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'exams' ? 'border-[var(--color-primary)] text-[var(--color-primary-dark)]' : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+          className={`pb-4 font-bold text-sm transition-colors border-b-2 relative ${activeTab === 'exams' ? 'border-[#2dc1c1] text-[#051c24]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
           onClick={() => setActiveTab('exams')}
         >
-          Exams ({exams.length})
+          Exams <span className="ml-1.5 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">{exams.length}</span>
         </button>
         <button 
-          className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'assignments' ? 'border-[var(--color-primary)] text-[var(--color-primary-dark)]' : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+          className={`pb-4 font-bold text-sm transition-colors border-b-2 relative ${activeTab === 'assignments' ? 'border-[#2dc1c1] text-[#051c24]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
           onClick={() => setActiveTab('assignments')}
         >
-          Assignments ({assignments.length})
+          Tasks <span className="ml-1.5 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">{assignments.length}</span>
         </button>
       </div>
 
       {activeTab === 'exams' && (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-4">
           {exams.length === 0 ? (
-            <div className="empty-state bg-white card rounded-2xl">
-              <Calendar className="mx-auto" />
-              <p className="mt-4">No exams scheduled.</p>
+            <div className="bg-white rounded-3xl p-12 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-4">
+                 <Calendar size={32} strokeWidth={2} />
+              </div>
+              <h3 className="text-xl font-bold text-[#051c24]">No exams scheduled</h3>
+              <p className="text-gray-500 font-medium mt-2">Add your upcoming exams to start planning your studies.</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {exams.map(exam => {
                 const daysUntil = Math.max(0, Math.ceil((new Date(exam.date) - new Date()) / (1000 * 60 * 60 * 24)));
                 return (
-                  <div key={exam.id} className="card p-5 relative overflow-hidden group border border-[var(--color-border-light)]">
-                    <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: exam.subject.color }}></div>
-                    <div className="flex justify-between items-start mb-2">
-                       <div className="text-xs font-bold px-2 py-1 rounded bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] uppercase tracking-wider" style={{ color: exam.subject.color }}>
+                  <div key={exam.id} className="bg-white rounded-3xl p-6 relative overflow-hidden group border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                    <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: exam.subject.color }}></div>
+                    <div className="flex justify-between items-start mb-4">
+                       <div className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-gray-50 text-gray-600 uppercase tracking-wide border border-gray-100" style={{ color: exam.subject.color }}>
                          {exam.subject.name}
                        </div>
-                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => openModal('exam', exam)} className="text-[var(--color-text-muted)] hover:text-[var(--color-primary)]"><Edit2 size={14}/></button>
-                          <button onClick={() => deleteItem(exam.id, 'exam')} className="text-[var(--color-text-muted)] hover:text-red-500"><Trash2 size={14}/></button>
+                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => openModal('exam', exam)} className="w-7 h-7 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[#2dc1c1] hover:bg-teal-50 transition-colors"><Edit2 size={12} strokeWidth={2.5}/></button>
+                          <button onClick={() => deleteItem(exam.id, 'exam')} className="w-7 h-7 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><Trash2 size={12} strokeWidth={2.5}/></button>
                        </div>
                     </div>
-                    <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-4">{exam.title}</h3>
-                    <div className="flex justify-between items-end border-t border-[var(--color-border-light)] pt-3">
+                    <h3 className="text-xl font-bold text-[#051c24] mb-6">{exam.title}</h3>
+                    <div className="flex justify-between items-end border-t border-gray-100 pt-4">
                        <div>
-                         <div className="text-xs text-[var(--color-text-muted)]">Date</div>
-                         <div className="font-medium text-sm">{new Date(exam.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</div>
+                         <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Date & Time</div>
+                         <div className="font-semibold text-sm text-[#051c24]">{new Date(exam.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</div>
                        </div>
                        {daysUntil > 0 ? (
-                          <div className={`text-xs font-bold px-2 py-1 rounded ${daysUntil <= 7 ? 'bg-red-50 text-red-600' : 'bg-orange-50 text-orange-600'}`}>
+                          <div className={`text-[11px] font-bold px-2.5 py-1 rounded-lg ${daysUntil <= 7 ? 'bg-red-50 text-red-600' : 'bg-orange-50 text-orange-600'}`}>
                             {daysUntil} days left
                           </div>
                        ) : (
-                          <div className="text-xs font-bold px-2 py-1 rounded bg-gray-100 text-gray-600">Past</div>
+                          <div className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600">Past</div>
                        )}
                     </div>
                   </div>
@@ -205,37 +208,50 @@ export default function ExamsAssignments() {
       )}
 
       {activeTab === 'assignments' && (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-4">
           {assignments.length === 0 ? (
-            <div className="empty-state bg-white card rounded-2xl">
-              <FileText className="mx-auto" />
-              <p className="mt-4">No assignments.</p>
+            <div className="bg-white rounded-3xl p-12 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-4">
+                 <FileText size={32} strokeWidth={2} />
+              </div>
+              <h3 className="text-xl font-bold text-[#051c24]">No tasks</h3>
+              <p className="text-gray-500 font-medium mt-2">Add your upcoming assignments and tasks.</p>
             </div>
           ) : (
-            <div className="card rounded-2xl overflow-hidden divide-y divide-[var(--color-border-light)]">
+            <div className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm divide-y divide-gray-100">
               {assignments.map(assignment => (
-                <div key={assignment.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[var(--color-surface-secondary)] transition-colors">
+                <div key={assignment.id} className="p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors group">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: assignment.subject.color }}></div>
-                      <span className="text-xs font-semibold uppercase text-[var(--color-text-secondary)]">{assignment.subject.name}</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">{assignment.subject.name}</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <h3 className={`text-lg font-bold truncate ${assignment.status === 'COMPLETED' ? 'text-[var(--color-text-muted)] line-through' : 'text-[var(--color-text-primary)]'}`}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className={`text-lg font-bold truncate ${assignment.status === 'COMPLETED' ? 'text-gray-400 line-through' : 'text-[#051c24]'}`}>
                         {assignment.title}
                       </h3>
-                      {assignment.status === 'COMPLETED' && <CheckCircle2 size={16} className="text-emerald-500" />}
+                      {assignment.status === 'COMPLETED' && <CheckCircle2 size={16} strokeWidth={3} className="text-emerald-500" />}
                     </div>
-                    <div className="flex gap-3 mt-2 text-sm text-[var(--color-text-secondary)]">
-                      <span>⏳ Due: {new Date(assignment.deadline).toLocaleDateString()}</span>
-                      <span>⏱ {assignment.estimatedHours} hrs</span>
-                      <span className={`badge badge-${assignment.status.toLowerCase().replace('_', '-')}`}>{assignment.status.replace('_', ' ')}</span>
+                    <div className="flex flex-wrap gap-2 text-[11px] font-bold">
+                      <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg flex items-center gap-1.5">
+                        <Calendar size={12} strokeWidth={2.5}/> Due: {new Date(assignment.deadline).toLocaleDateString()}
+                      </span>
+                      <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg">
+                        ⏱ {assignment.estimatedHours} hrs
+                      </span>
+                      <span className={`px-2.5 py-1 rounded-lg ${
+                        assignment.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' :
+                        assignment.status === 'IN_PROGRESS' ? 'bg-blue-50 text-blue-600' :
+                        assignment.status === 'MISSED' ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {assignment.status.replace('_', ' ')}
+                      </span>
                     </div>
                   </div>
                   
-                  <div className="flex gap-2">
-                    <button onClick={() => openModal('assignment', assignment)} className="btn btn-outline btn-sm">Edit</button>
-                    <button onClick={() => deleteItem(assignment.id, 'assignment')} className="btn btn-outline btn-sm text-red-600 hover:bg-red-50">Delete</button>
+                  <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => openModal('assignment', assignment)} className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-bold text-xs hover:bg-gray-50 transition-colors">Edit</button>
+                    <button onClick={() => deleteItem(assignment.id, 'assignment')} className="px-4 py-2 rounded-xl border border-red-100 text-red-600 font-bold text-xs hover:bg-red-50 transition-colors">Delete</button>
                   </div>
                 </div>
               ))}
@@ -245,73 +261,73 @@ export default function ExamsAssignments() {
       )}
 
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl border border-gray-100">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[var(--color-primary-dark)]">
-                {editingId ? `Edit ${activeTab === 'exams' ? 'Exam' : 'Assignment'}` : `New ${activeTab === 'exams' ? 'Exam' : 'Assignment'}`}
+              <h2 className="text-xl font-bold text-[#051c24]">
+                {editingId ? `Edit ${activeTab === 'exams' ? 'Exam' : 'Task'}` : `New ${activeTab === 'exams' ? 'Exam' : 'Task'}`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">✕</button>
+              <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-800 transition-colors">✕</button>
             </div>
             
             {activeTab === 'exams' ? (
               <form onSubmit={handleExamSubmit(onExamSubmit)} className="space-y-4">
-                <div className="form-group">
-                  <label className="form-label">Subject</label>
-                  <select className="form-input" {...registerExam('subjectId')}>
+                <div>
+                  <label className="block text-sm font-bold text-[#051c24] mb-2">Subject</label>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" {...registerExam('subjectId')}>
                     {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
-                  {examErrors.subjectId && <p className="form-error">{examErrors.subjectId.message}</p>}
+                  {examErrors.subjectId && <p className="text-red-500 text-xs font-bold mt-1.5">{examErrors.subjectId.message}</p>}
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Exam Title</label>
-                  <input type="text" className="form-input" placeholder="e.g. Midterm 1" {...registerExam('title')} />
-                  {examErrors.title && <p className="form-error">{examErrors.title.message}</p>}
+                <div>
+                  <label className="block text-sm font-bold text-[#051c24] mb-2">Exam Title</label>
+                  <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" placeholder="e.g. Midterm 1" {...registerExam('title')} />
+                  {examErrors.title && <p className="text-red-500 text-xs font-bold mt-1.5">{examErrors.title.message}</p>}
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Date & Time</label>
-                  <input type="datetime-local" className="form-input" {...registerExam('date')} />
-                  {examErrors.date && <p className="form-error">{examErrors.date.message}</p>}
+                <div>
+                  <label className="block text-sm font-bold text-[#051c24] mb-2">Date & Time</label>
+                  <input type="datetime-local" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" {...registerExam('date')} />
+                  {examErrors.date && <p className="text-red-500 text-xs font-bold mt-1.5">{examErrors.date.message}</p>}
                 </div>
-                <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-outline flex-1">Cancel</button>
-                  <button type="submit" className="btn btn-primary flex-1">Save</button>
+                <div className="flex gap-3 pt-6 mt-2 border-t border-gray-100">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-colors">Cancel</button>
+                  <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[#2dc1c1] text-white font-bold hover:bg-[#1b8c8c] transition-colors">Save</button>
                 </div>
               </form>
             ) : (
               <form onSubmit={handleAssignmentSubmit(onAssignmentSubmit)} className="space-y-4">
-                <div className="form-group">
-                  <label className="form-label">Subject</label>
-                  <select className="form-input" {...registerAssignment('subjectId')}>
+                <div>
+                  <label className="block text-sm font-bold text-[#051c24] mb-2">Subject</label>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" {...registerAssignment('subjectId')}>
                     {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Assignment Title</label>
-                  <input type="text" className="form-input" placeholder="e.g. Essay Draft" {...registerAssignment('title')} />
-                  {assignmentErrors.title && <p className="form-error">{assignmentErrors.title.message}</p>}
+                <div>
+                  <label className="block text-sm font-bold text-[#051c24] mb-2">Task Title</label>
+                  <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" placeholder="e.g. Essay Draft" {...registerAssignment('title')} />
+                  {assignmentErrors.title && <p className="text-red-500 text-xs font-bold mt-1.5">{assignmentErrors.title.message}</p>}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="form-group">
-                    <label className="form-label">Deadline</label>
-                    <input type="datetime-local" className="form-input" {...registerAssignment('deadline')} />
+                  <div>
+                    <label className="block text-sm font-bold text-[#051c24] mb-2">Deadline</label>
+                    <input type="datetime-local" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" {...registerAssignment('deadline')} />
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Est. Hours</label>
-                    <input type="number" step="0.5" className="form-input" {...registerAssignment('estimatedHours')} />
+                  <div>
+                    <label className="block text-sm font-bold text-[#051c24] mb-2">Est. Hours</label>
+                    <input type="number" step="0.5" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" {...registerAssignment('estimatedHours')} />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Status</label>
-                  <select className="form-input" {...registerAssignment('status')}>
+                <div>
+                  <label className="block text-sm font-bold text-[#051c24] mb-2">Status</label>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2dc1c1]/20 focus:border-[#2dc1c1] transition-all" {...registerAssignment('status')}>
                     <option value="NOT_STARTED">Not Started</option>
                     <option value="IN_PROGRESS">In Progress</option>
                     <option value="COMPLETED">Completed</option>
                   </select>
                 </div>
-                <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-outline flex-1">Cancel</button>
-                  <button type="submit" className="btn btn-primary flex-1">Save</button>
+                <div className="flex gap-3 pt-6 mt-2 border-t border-gray-100">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-colors">Cancel</button>
+                  <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[#2dc1c1] text-white font-bold hover:bg-[#1b8c8c] transition-colors">Save</button>
                 </div>
               </form>
             )}

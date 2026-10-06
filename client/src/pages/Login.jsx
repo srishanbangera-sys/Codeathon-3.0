@@ -41,7 +41,7 @@ export default function Login() {
           <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)] flex items-center justify-center">
             <GraduationCap size={24} className="text-[var(--color-primary-dark)]" />
           </div>
-          <span className="text-2xl font-bold text-[var(--color-primary-dark)]" style={{ fontFamily: 'var(--font-heading)' }}>StudyPilot</span>
+          <span className="text-2xl font-bold text-[var(--color-primary-dark)]" style={{ fontFamily: 'var(--font-heading)' }}>LearnBuddy</span>
         </Link>
         
         <div className="bg-white py-10 px-6 shadow-xl rounded-2xl sm:px-10 border border-[var(--color-border-light)]">

@@ -48,7 +48,7 @@ export default function SubjectDetail() {
   const fetchSubject = async () => {
     try {
       const res = await subjectsAPI.get(id);
-      setSubject(res.data.data);
+      setSubject(res.data?.data || null);
     } catch (err) {
       toast.error('Failed to load subject details');
     } finally {

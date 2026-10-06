@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="w-8 h-8 rounded-lg bg-[#2dc1c1] flex items-center justify-center">
             <span className="text-white font-bold text-lg leading-none">S</span>
           </div>
-          <span className="text-xl font-bold tracking-tight">StudyPilot</span>
+          <span className="text-xl font-bold tracking-tight">LearnBuddy</span>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400 font-medium">
@@ -22,7 +22,7 @@ export default function Footer() {
         </div>
 
         <div className="text-sm text-gray-500">
-          © 2026 StudyPilot
+          © 2026 LearnBuddy
         </div>
       </div>
     </footer>

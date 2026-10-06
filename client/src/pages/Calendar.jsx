@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/react/daygrid';
+import timeGridPlugin from '@fullcalendar/react/timegrid';
+import interactionPlugin from '@fullcalendar/react/interaction';
 import toast from 'react-hot-toast';
 import { scheduleAPI, examsAPI, assignmentsAPI } from '../api';
 import { Sparkles, RefreshCcw, CheckCircle2, Clock } from 'lucide-react';
@@ -25,7 +25,8 @@ export default function Calendar() {
       const formattedEvents = [];
 
       // Add Sessions
-      sessionsRes.data.data.forEach(s => {
+      (sessionsRes.data?.data || []).forEach(s => {
+        if (!s || !s.startTime || !s.date) return;
         const dateStr = new Date(s.date).toISOString().split('T')[0];
         formattedEvents.push({
           id: `session_${s.id}`,
@@ -44,7 +45,8 @@ export default function Calendar() {
       });
 
       // Add Exams
-      examsRes.data.data.forEach(e => {
+      (examsRes.data?.data || []).forEach(e => {
+        if (!e) return;
         formattedEvents.push({
           id: `exam_${e.id}`,
           title: `EXAM: ${e.title}`,
@@ -52,13 +54,13 @@ export default function Calendar() {
           backgroundColor: '#EF4444',
           borderColor: 'transparent',
           allDay: true,
-          extendedProps: { type: 'exam', subject: e.subject.name }
+          extendedProps: { type: 'exam', subject: e.subject?.name }
         });
       });
 
       // Add Assignments
-      assignRes.data.data.forEach(a => {
-        if (a.status === 'COMPLETED') return;
+      (assignRes.data?.data || []).forEach(a => {
+        if (!a || a.status === 'COMPLETED') return;
         formattedEvents.push({
           id: `assignment_${a.id}`,
           title: `DUE: ${a.title}`,
@@ -66,7 +68,7 @@ export default function Calendar() {
           backgroundColor: '#F59E0B',
           borderColor: 'transparent',
           allDay: true,
-          extendedProps: { type: 'assignment', subject: a.subject.name }
+          extendedProps: { type: 'assignment', subject: a.subject?.name }
         });
       });
 
@@ -141,27 +143,27 @@ export default function Calendar() {
   if (loading) return <div className="skeleton h-[600px] rounded-2xl w-full"></div>;
 
   return (
-    <div className="space-y-6 page-enter h-[calc(100vh-80px)] flex flex-col">
+    <div className="space-y-6 page-enter h-[calc(100vh-80px)] flex flex-col max-w-[1400px]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-primary-dark)]">Schedule</h1>
-          <p className="text-[var(--color-text-secondary)] mt-1">Your auto-generated study timetable</p>
+          <h1 className="text-3xl font-bold text-[#051c24] tracking-tight">Schedule</h1>
+          <p className="text-gray-500 font-medium mt-1">Your auto-generated study timetable</p>
         </div>
         
-        <div className="flex flex-wrap gap-2">
-           <button onClick={() => handleGenerate(false)} disabled={generating} className="btn btn-outline btn-sm">
-             <RefreshCcw size={16} className={generating ? 'animate-spin' : ''} /> Generate Plan
+        <div className="flex flex-wrap gap-3">
+           <button onClick={() => handleGenerate(false)} disabled={generating} className="px-5 py-2.5 rounded-full border-2 border-gray-200 text-gray-600 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center gap-2 disabled:opacity-50">
+             <RefreshCcw size={18} strokeWidth={2.5} className={generating ? 'animate-spin' : ''} /> Generate Plan
            </button>
-           <button onClick={() => handleGenerate(true)} disabled={generating} className="btn bg-indigo-600 text-white hover:bg-indigo-700 btn-sm">
-             <Sparkles size={16} /> AI Plan
+           <button onClick={() => handleGenerate(true)} disabled={generating} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-5 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-sm disabled:opacity-50">
+             <Sparkles size={18} strokeWidth={2.5} /> AI Plan
            </button>
-           <button onClick={handleReplan} disabled={generating} className="btn btn-primary btn-sm">
+           <button onClick={handleReplan} disabled={generating} className="bg-[#2dc1c1] hover:bg-[#1b8c8c] text-white font-bold px-5 py-2.5 rounded-full flex items-center gap-2 transition-colors shadow-sm disabled:opacity-50">
              Replan
            </button>
         </div>
       </div>
 
-      <div className="card p-4 flex-1 min-h-0">
+      <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex-1 min-h-0 custom-calendar">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -183,32 +185,36 @@ export default function Calendar() {
       </div>
 
       {selectedEvent && (
-        <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-6 border-b border-[var(--color-border-light)] pb-4">
-              <h2 className="text-xl font-bold text-[var(--color-primary-dark)] flex items-center gap-2">
-                {selectedEvent.type === 'session' ? <Clock className="text-[var(--color-primary)]" /> : null}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
+          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl border border-gray-100" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+              <h2 className="text-xl font-bold text-[#051c24] flex items-center gap-3">
+                {selectedEvent.type === 'session' ? (
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#2dc1c1] flex items-center justify-center">
+                    <Clock size={20} strokeWidth={2.5} />
+                  </div>
+                ) : null}
                 {selectedEvent.title}
               </h2>
-              <button onClick={() => setSelectedEvent(null)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">✕</button>
+              <button onClick={() => setSelectedEvent(null)} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-800 transition-colors">✕</button>
             </div>
             
             <div className="space-y-4 mb-8">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                   <div className="text-xs text-[var(--color-text-muted)] uppercase font-bold tracking-wider">Subject</div>
-                   <div className="font-medium">{selectedEvent.subject || 'N/A'}</div>
+                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                   <div className="text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-1">Subject</div>
+                   <div className="font-bold text-[#051c24]">{selectedEvent.subject || 'N/A'}</div>
                 </div>
-                <div>
-                   <div className="text-xs text-[var(--color-text-muted)] uppercase font-bold tracking-wider">Type</div>
-                   <div className="font-medium capitalize">{selectedEvent.type}</div>
+                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                   <div className="text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-1">Type</div>
+                   <div className="font-bold text-[#051c24] capitalize">{selectedEvent.type}</div>
                 </div>
               </div>
               
               {selectedEvent.start && (
-                <div>
-                   <div className="text-xs text-[var(--color-text-muted)] uppercase font-bold tracking-wider">Time</div>
-                   <div className="font-medium">
+                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                   <div className="text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-1">Time</div>
+                   <div className="font-bold text-[#051c24]">
                      {selectedEvent.start.toLocaleString()}
                      {selectedEvent.end && ` - ${selectedEvent.end.toLocaleTimeString()}`}
                    </div>
@@ -217,8 +223,12 @@ export default function Calendar() {
               
               {selectedEvent.type === 'session' && (
                  <div>
-                   <div className="text-xs text-[var(--color-text-muted)] uppercase font-bold tracking-wider mb-1">Status</div>
-                   <div className={`inline-flex badge badge-${selectedEvent.status.toLowerCase().replace('_', '-')}`}>
+                   <div className="text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-2">Status</div>
+                   <div className={`inline-flex px-3 py-1.5 rounded-lg font-bold text-sm ${
+                        selectedEvent.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' :
+                        selectedEvent.status === 'SCHEDULED' ? 'bg-blue-50 text-blue-600' :
+                        selectedEvent.status === 'MISSED' ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'
+                   }`}>
                      {selectedEvent.status}
                    </div>
                  </div>
@@ -228,15 +238,15 @@ export default function Calendar() {
             {selectedEvent.type === 'session' && selectedEvent.status !== 'COMPLETED' && (
               <button 
                 onClick={markSessionComplete}
-                className="btn btn-success w-full py-3 text-lg"
+                className="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg flex items-center justify-center gap-2 transition-colors shadow-sm"
               >
-                <CheckCircle2 /> Mark as Completed
+                <CheckCircle2 strokeWidth={2.5} /> Mark as Completed
               </button>
             )}
             
             {selectedEvent.type === 'session' && selectedEvent.status === 'COMPLETED' && (
-              <div className="text-center p-4 bg-emerald-50 text-emerald-700 rounded-xl font-bold flex items-center justify-center gap-2">
-                 <CheckCircle2 /> Great job! Session completed.
+              <div className="text-center p-4 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-xl font-bold flex items-center justify-center gap-2">
+                 <CheckCircle2 strokeWidth={2.5} /> Great job! Session completed.
               </div>
             )}
           </div>

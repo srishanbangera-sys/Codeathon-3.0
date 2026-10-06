@@ -59,7 +59,7 @@ export default function AppPreview() {
               <div className="w-6 h-6 rounded bg-[#2dc1c1] flex items-center justify-center">
                 <span className="text-white font-bold text-xs">S</span>
               </div>
-              <span className="font-bold text-gray-900 text-sm">StudyPilot</span>
+              <span className="font-bold text-gray-900 text-sm">LearnBuddy</span>
             </div>
             <nav className="flex flex-col gap-1 w-full">
               <button className="flex items-center gap-2 h-9 rounded-lg bg-[#2dc1c1]/10 text-[#2dc1c1] font-bold text-sm px-3 w-full">

@@ -16,11 +16,11 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-[#051c24] sticky top-0 z-50 border-b border-white/5">
       <div className="w-full max-w-[1200px] mx-auto px-6 h-[80px] flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2dc1c1] rounded" aria-label="StudyPilot Home">
+        <Link to="/" className="flex items-center gap-2.5 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2dc1c1] rounded" aria-label="LearnBuddy Home">
           <div className="w-9 h-9 rounded-lg bg-[#2dc1c1] flex items-center justify-center">
             <span className="text-white font-bold text-xl leading-none">S</span>
           </div>
-          <span className="text-[22px] font-bold tracking-tight">StudyPilot</span>
+          <span className="text-[22px] font-bold tracking-tight">LearnBuddy</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-10 text-[15px] font-medium text-white/70">

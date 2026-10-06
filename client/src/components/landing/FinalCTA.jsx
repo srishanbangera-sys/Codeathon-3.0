@@ -13,7 +13,7 @@ export default function FinalCTA() {
             Take the lead in your studies.
           </h2>
           <p className="text-xl text-gray-400 mb-0">
-            Join StudyPilot today and let your progress earn you the rewards you actually want.
+            Join LearnBuddy today and let your progress earn you the rewards you actually want.
           </p>
         </div>
         

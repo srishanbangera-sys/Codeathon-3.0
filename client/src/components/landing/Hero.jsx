@@ -30,7 +30,7 @@ export default function Hero() {
           </h1>
           
           <p className="text-[17px] text-white/80 mb-10 leading-relaxed max-w-lg font-medium">
-            Map out your subjects, deadlines, and weekly hours. StudyPilot generates a personalized schedule and notifies your advocates when you hit milestones to claim your rewards.
+            Map out your subjects, deadlines, and weekly hours. LearnBuddy generates a personalized schedule and notifies your advocates when you hit milestones to claim your rewards.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto mb-16">

@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function seed() {
-  console.log('🌱 Seeding StudyPilot database...');
+  console.log('🌱 Seeding LearnBuddy database...');
 
   // Clean existing data
   await prisma.resource.deleteMany();

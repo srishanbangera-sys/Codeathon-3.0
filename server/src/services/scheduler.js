@@ -1,5 +1,5 @@
 /**
- * StudyPilot Scheduler - Rule-based deterministic scheduling algorithm
+ * LearnBuddy Scheduler - Rule-based deterministic scheduling algorithm
  * 
  * Priority score = 0.4*urgency + 0.3*difficulty + 0.2*(1-progress) + 0.1*subjectPriority
  * Normalized to 0-1 range for each component.

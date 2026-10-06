@@ -24,7 +24,7 @@ export default function FeatureBento() {
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-4">A schedule that fits you</h3>
                 <p className="text-lg text-gray-400 max-w-md">
-                  Add 5 subjects, 3 exams and your deadlines. StudyPilot arranges your topics by priority and available hours into a daily checklist.
+                  Add 5 subjects, 3 exams and your deadlines. LearnBuddy arranges your topics by priority and available hours into a daily checklist.
                 </p>
               </div>
               

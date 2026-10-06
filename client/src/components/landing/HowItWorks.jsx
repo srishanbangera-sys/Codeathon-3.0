@@ -24,7 +24,7 @@ export default function HowItWorks() {
     {
       num: "03",
       title: "Claim your rewards",
-      desc: "Finished a tough week? Hit 100% of your weekly goal and StudyPilot notifies your parents or mentors so you can cash in on the rewards you agreed on.",
+      desc: "Finished a tough week? Hit 100% of your weekly goal and LearnBuddy notifies your parents or mentors so you can cash in on the rewards you agreed on.",
       icon: Trophy,
       color: "#8b5cf6",
       lightBg: "rgba(139, 92, 246, 0.1)",
