@@ -26,7 +26,7 @@ export default function Login() {
       setLoading(true);
       await login(data.email, data.password);
       toast.success('Logged in successfully');
-      navigate('/dashboard');
+      window.location.href = "https://studyflow-smart-study-planner-progress-tracker.ai.studio";
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Login failed');
     } finally {

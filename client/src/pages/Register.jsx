@@ -27,7 +27,7 @@ export default function Register() {
       setLoading(true);
       await registerUser(data.name, data.email, data.password);
       toast.success('Account created successfully');
-      navigate('/dashboard');
+      window.location.href = "https://studyflow-smart-study-planner-progress-tracker.ai.studio";
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Registration failed');
     } finally {
